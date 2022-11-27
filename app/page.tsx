@@ -52,7 +52,7 @@ interface Competitor {
   id: string;
   name: string;
   logo: string;
-  score: string;
+  score: any;
   winner: boolean;
 }
 
@@ -62,7 +62,12 @@ export default async function Page() {
   );
   const data = await res.json();
   const events = data.events.map(
-    (event: { competitions: { competitors: any[] }[] }) => {
+    (event: {
+      competitions: {
+        date: string;
+        competitors: any[];
+      }[];
+    }) => {
       const competitors = event.competitions[0].competitors.map(
         (competitor) => {
           return {
@@ -78,10 +83,10 @@ export default async function Page() {
       // This is hacky, but it works for now
       const favoriteTeam: Competitor = competitors.find(
         (competitor) => competitor.id === '66'
-      );
+      )!;
       const otherTeam: Competitor = competitors.find(
         (competitor) => competitor.id !== '66'
-      );
+      )!;
 
       return {
         date: event.competitions[0].date,
