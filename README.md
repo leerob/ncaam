@@ -2,6 +2,14 @@
 
 > Simple basketball scores and schedules.
 
+## Overview
+
+This site was built live on my stream.
+
+- [Watch Video](https://www.youtube.com/watch?v=6XIT2nXIbLU)
+- [View Demo](https://ncaam.vercel.app)
+- [Figma Design](https://www.figma.com/file/L4O7Rufrr0kMHG3zWax9zR/NCAAM-Site?node-id=0%3A1&t=MEqkk5FBLvOUoL0k-1)
+
 ## APIs
 
 - https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/66
