@@ -58,7 +58,8 @@ interface Competitor {
 
 export default async function Page() {
   const res = await fetch(
-    'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/66/schedule'
+    'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/66/schedule',
+    { next: { revalidate: 60 } }
   );
   const data = await res.json();
   const events = data.events.map(
