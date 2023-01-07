@@ -2,7 +2,9 @@ interface Competitor {
   id: string;
   name: string;
   logo: string;
-  score: any;
+  score: {
+    value: string;
+  };
   winner: boolean;
   team: {
     id: string;
@@ -15,21 +17,30 @@ interface Competitor {
 }
 
 export interface Game {
-  date: string;
-  name: string;
+  awayScore: number | undefined;
+  date: Date;
+  homeScore: number | undefined;
   logo: string;
-  score: string;
+  name: string;
   winner: boolean;
 }
 
-export async function getScheduleGames(teamId: string): Promise<Array<Game>> {
+export interface Team {
+  id: string;
+  name: string;
+  logo: string;
+  record: string;
+  standing: string;
+  games: Array<Game>;
+}
+
+export async function getTeamData(teamId: string): Promise<Team> {
   const res = await fetch(
     `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`,
     { next: { revalidate: 60 } }
   );
   const data = await res.json();
-
-  return data.events.map(
+  const games = data.events.map(
     (event: {
       competitions: {
         date: string;
@@ -52,14 +63,22 @@ export async function getScheduleGames(teamId: string): Promise<Array<Game>> {
       }
 
       return {
-        date: event.competitions[0].date,
+        date: new Date(event.competitions[0].date),
         name: otherTeam.team.displayName,
         logo: otherTeam.team.logos[0].href,
-        score:
-          favoriteTeam.score &&
-          `${otherTeam.score.displayValue}-${favoriteTeam.score.displayValue}`,
+        homeScore: favoriteTeam?.score?.value,
+        awayScore: otherTeam?.score?.value,
         winner: favoriteTeam.winner,
       };
     }
   );
+
+  return {
+    id: teamId,
+    name: data.team.displayName,
+    logo: data.team.logo,
+    record: data.team.recordSummary,
+    standing: data.team.standingSummary,
+    games,
+  };
 }
