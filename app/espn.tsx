@@ -21,6 +21,7 @@ export interface Game {
   date: Date;
   homeScore: number | undefined;
   logo: string;
+  color: string;
   name: string;
   winner: boolean;
 }
@@ -29,6 +30,7 @@ export interface Team {
   id: string;
   name: string;
   logo: string;
+  color: string;
   record: string;
   standing: string;
   games: Array<Game>;
@@ -62,10 +64,17 @@ export async function getTeamData(teamId: string): Promise<Team> {
         );
       }
 
+      // Unfortunately this data isn't on this API yet
+      // Probably will need to stitch together APIs or find a different way
+      // This is for teams with black logos, so we invert the color of the image
+      const color =
+        otherTeam.team.displayName === 'Iowa Hawkeyes' ? '000000' : 'TODO';
+
       return {
         date: new Date(event.competitions[0].date),
         name: otherTeam.team.displayName,
         logo: otherTeam.team.logos[0].href,
+        color,
         homeScore: favoriteTeam?.score?.value,
         awayScore: otherTeam?.score?.value,
         winner: favoriteTeam.winner,
@@ -77,6 +86,7 @@ export async function getTeamData(teamId: string): Promise<Team> {
     id: teamId,
     name: data.team.displayName,
     logo: data.team.logo,
+    color: data.team.color,
     record: data.team.recordSummary,
     standing: data.team.standingSummary,
     games,
