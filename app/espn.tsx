@@ -65,18 +65,21 @@ export async function getTeamData(teamId: string) {
 }
 
 export async function getAllTeamIds() {
-  let page = 1;
-  let teams: z.infer<typeof Team>[] = [];
-
-  while (page <= 8) {
-    const res = await fetch(
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${page}`
+  const pagePromises: Promise<z.infer<typeof Teams>>[] = [];
+  for (let page = 1; page <= 8; page++) {
+    pagePromises.push(
+      fetch(
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${page}`
+      ).then((res) => res.json())
     );
-    const data: z.infer<typeof Teams> = await res.json();
+  }
+
+  const dataArray = await Promise.all(pagePromises);
+  let teams: z.infer<typeof Team>[] = [];
+  for (const data of dataArray) {
     teams = teams.concat(
       data.sports[0].leagues[0].teams.map((team) => team.team)
     );
-    page++;
   }
 
   // Sort teams alphabetically a-Z
