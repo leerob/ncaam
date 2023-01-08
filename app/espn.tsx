@@ -6,6 +6,9 @@ interface Competitor {
     value: string;
   };
   winner: boolean;
+  curatedRank: {
+    current: number;
+  };
   team: {
     id: string;
     displayName: string;
@@ -17,9 +20,11 @@ interface Competitor {
 }
 
 export interface Game {
-  awayScore: number | undefined;
   date: Date;
   homeScore: number | undefined;
+  awayScore: number | undefined;
+  teamId: string;
+  rank: number;
   logo: string;
   color: string;
   name: string;
@@ -70,10 +75,17 @@ export async function getTeamData(teamId: string): Promise<Team> {
       const color =
         otherTeam.team.displayName === 'Iowa Hawkeyes' ? '000000' : 'TODO';
 
+      // Some teams don't have logos, use the default
+      const logo = otherTeam.team.logos
+        ? otherTeam.team.logos[0].href
+        : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png';
+
       return {
         date: new Date(event.competitions[0].date),
         name: otherTeam.team.displayName,
-        logo: otherTeam.team.logos[0].href,
+        teamId: otherTeam.team.id,
+        rank: otherTeam.curatedRank.current,
+        logo,
         color,
         homeScore: favoriteTeam?.score?.value,
         awayScore: otherTeam?.score?.value,
@@ -91,4 +103,20 @@ export async function getTeamData(teamId: string): Promise<Team> {
     standing: data.team.standingSummary,
     games,
   };
+}
+
+export async function getAllTeamIds(): Promise<Team[]> {
+  const res = await fetch(
+    'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams'
+  );
+  const data = await res.json();
+
+  return data.sports[0].leagues[0].teams.map(
+    ({ team }: { team: { id: number; displayName: string } }) => {
+      return {
+        id: team.id,
+        name: team.displayName,
+      };
+    }
+  );
 }
