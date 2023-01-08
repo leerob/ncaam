@@ -17,11 +17,11 @@ function Row({
   winner,
 }: any) {
   return (
-    <div className="flex border-b border-gray-200 dark:border-gray-800 justify-between px-4 py-2">
+    <div className="flex flex-col min-[450px]:flex-row border-b border-gray-200 dark:border-gray-800 justify-between px-0 min-[450px]:px-4 py-2">
       <div className="flex">
         <Image
           src={logo}
-          alt="Iowa State Cyclones"
+          alt={name}
           priority={index < 10}
           width={20}
           height={20}
@@ -38,18 +38,24 @@ function Row({
           {name}
         </Link>
       </div>
-      <div className="flex text-right">
+      <div className="flex flex-row-reverse justify-end min-[450px]:flex-row">
         {homeScore ? (
           <p className="text-gray-700 dark:text-gray-300">{`${homeScore}-${awayScore}`}</p>
         ) : null}
         {homeScore ? (
           winner ? (
-            <p className="font-semibold text-green-700 ml-2">W</p>
+            <p className="font-semibold text-green-700 mr-2 ml-0 min-[450px]:ml-2">
+              W
+            </p>
           ) : (
-            <p className="font-semibold text-red-700 ml-2">L</p>
+            <p className="font-semibold text-red-700 mr-2 ml-0 min-[450px]:ml-2">
+              L
+            </p>
           )
         ) : homeScore === 0 ? (
-          <p className="font-semibold text-gray-500 ml-2">—</p>
+          <p className="font-semibold text-gray-500 mr-2 ml-0 min-[450px]:ml-2">
+            —
+          </p>
         ) : (
           <p className="text-gray-700 dark:text-gray-300 proportional-nums">
             {date}
@@ -69,13 +75,25 @@ export default async function HomePage({
     getTeamData(params.teamId),
     getAllTeamIds(),
   ]);
-  const { name, record, color, standing, games } = team;
+  const { name, record, color, standing, games, logo } = team;
 
   return (
     <>
       <div className="h-4" style={{ background: `#${color}` }} />
-      <section className="my-8 max-w-lg mx-auto px-2">
-        <h1 className="font-semibold text-2xl">{name}</h1>
+      <section className="my-6 max-w-lg mx-auto px-4">
+        <div className="flex items-center">
+          <Image
+            src={logo}
+            alt="Logo"
+            priority
+            width={24}
+            height={24}
+            className={clsx('h-6 w-6', {
+              invert: color === '000000',
+            })}
+          />
+          <h1 className="font-semibold text-2xl ml-2">{name}</h1>
+        </div>
         <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>
         <TeamSelect allTeams={allTeams} teamId={params.teamId} />
         <h2 className="font-semibold text-xl">Schedule</h2>
