@@ -106,17 +106,28 @@ export async function getTeamData(teamId: string): Promise<Team> {
 }
 
 export async function getAllTeamIds(): Promise<Team[]> {
-  const res = await fetch(
-    'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams'
-  );
-  const data = await res.json();
+  let page = 1;
+  let teams: Team[] = [];
 
-  return data.sports[0].leagues[0].teams.map(
-    ({ team }: { team: { id: number; displayName: string } }) => {
-      return {
-        id: team.id,
-        name: team.displayName,
-      };
-    }
-  );
+  while (page <= 8) {
+    const res = await fetch(
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${page}`
+    );
+    const data = await res.json();
+    teams = teams.concat(
+      data.sports[0].leagues[0].teams.map(
+        ({ team }: { team: { id: number; displayName: string } }) => {
+          return {
+            id: team.id,
+            name: team.displayName,
+          };
+        }
+      )
+    );
+    page++;
+  }
+
+  // Sort teams alphabetically a-Z
+  teams.sort((a, b) => (a.name > b.name ? 1 : -1));
+  return teams;
 }

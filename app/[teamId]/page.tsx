@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Game, getAllTeamIds, getTeamData } from 'app/espn';
+import TeamSelect from './select';
 
 interface GameWithIndex extends Game {
   index: number;
@@ -87,21 +88,7 @@ export default async function HomePage({
       <section className="my-8 max-w-lg mx-auto px-2">
         <h1 className="font-semibold text-2xl">{name}</h1>
         <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>
-        <div className="mb-6 border border-gray-300 dark:border-gray-700 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-          {/* Safari web styles are still bad */}
-          <select
-            className="font-semibold px-2 py-3 w-full bg-white dark:bg-black text-gray-800 dark:text-gray-200 border-r-transparent border-r-8 rounded-md bg-none"
-            defaultValue={params.teamId}
-          >
-            {/* <optgroup label="Big 12"> */}
-            {/* Could be nice, if I had that data here */}
-            {allTeams.map((team) => (
-              <option key={team.id} value={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <TeamSelect allTeams={allTeams} teamId={params.teamId} />
         <h2 className="font-semibold text-xl">Schedule</h2>
         <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">
           Full
