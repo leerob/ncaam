@@ -16,13 +16,6 @@ function Row({
   teamId,
   winner,
 }: any) {
-  const formattedDate = date.toLocaleString('en-US', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
   return (
     <div className="flex border-b border-gray-200 dark:border-gray-800 justify-between px-4 py-2">
       <div className="flex">
@@ -59,7 +52,7 @@ function Row({
           <p className="font-semibold text-gray-500 ml-2">—</p>
         ) : (
           <p className="text-gray-700 dark:text-gray-300 proportional-nums">
-            {formattedDate}
+            {date}
           </p>
         )}
       </div>

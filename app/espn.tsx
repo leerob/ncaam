@@ -35,7 +35,7 @@ export async function getTeamData(teamId: string) {
       : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png';
 
     return {
-      date: new Date(event.competitions[0].date),
+      date: event.competitions[0].status.type.shortDetail,
       name: otherTeam.team.displayName,
       teamId: otherTeam.team.id,
       rank: otherTeam.curatedRank.current,
