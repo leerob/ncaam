@@ -3,17 +3,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Game, getAllTeamIds, getTeamData } from 'app/espn';
 
+interface GameWithIndex extends Game {
+  index: number;
+}
+
 function Row({
   awayScore,
   color,
   date,
   homeScore,
+  index,
   logo,
   name,
   rank,
   teamId,
   winner,
-}: Game) {
+}: GameWithIndex) {
   const formattedDate = date.toLocaleString('en-US', {
     day: '2-digit',
     month: '2-digit',
@@ -27,6 +32,7 @@ function Row({
         <Image
           src={logo}
           alt="Iowa State Cyclones"
+          priority={index < 10}
           width={20}
           height={20}
           className={clsx('h-5 w-5', {
@@ -101,8 +107,8 @@ export default async function HomePage({
           Full
         </h3>
         <div>
-          {games.map((game) => {
-            return <Row key={game.name} {...game} />;
+          {games.map((game, index) => {
+            return <Row key={game.name} index={index} {...game} />;
           })}
         </div>
       </section>
