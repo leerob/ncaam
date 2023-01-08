@@ -10,6 +10,7 @@ function Row({
   date,
   homeScore,
   index,
+  isLast,
   logo,
   name,
   rank,
@@ -17,7 +18,12 @@ function Row({
   winner,
 }: any) {
   return (
-    <div className="flex flex-col min-[450px]:flex-row border-b border-gray-200 dark:border-gray-800 justify-between px-0 min-[450px]:px-4 py-2">
+    <div
+      className={clsx(
+        'flex flex-col min-[450px]:flex-row justify-between px-0 min-[450px]:px-4 py-2',
+        { 'border-b border-gray-200 dark:border-gray-800': !isLast }
+      )}
+    >
       <div className="flex">
         <Image
           src={logo}
@@ -40,26 +46,24 @@ function Row({
       </div>
       <div className="flex flex-row-reverse justify-end min-[450px]:flex-row">
         {homeScore ? (
-          <p className="text-gray-700 dark:text-gray-300">{`${homeScore}-${awayScore}`}</p>
+          <p className="text-gray-700 dark:text-gray-300 tabular-nums">{`${homeScore}-${awayScore}`}</p>
         ) : null}
         {homeScore ? (
           winner ? (
-            <p className="font-semibold text-green-700 mr-2 ml-0 min-[450px]:ml-2">
+            <p className="font-semibold text-green-700 dark:text-green-500 ml-0 min-[450px]:ml-2 w-5 mr-4 min-[450px]:mr-0 text-center">
               W
             </p>
           ) : (
-            <p className="font-semibold text-red-700 mr-2 ml-0 min-[450px]:ml-2">
+            <p className="font-semibold text-red-700 dark:text-red-500 ml-0 min-[450px]:ml-2 w-5 mr-4 min-[450px]:mr-0 text-center">
               L
             </p>
           )
         ) : homeScore === 0 ? (
-          <p className="font-semibold text-gray-500 mr-2 ml-0 min-[450px]:ml-2">
+          <p className="font-semibold text-gray-500 ml-0 min-[450px]:ml-2 w-5 mr-4 min-[450px]:mr-0 text-center">
             —
           </p>
         ) : (
-          <p className="text-gray-700 dark:text-gray-300 proportional-nums">
-            {date}
-          </p>
+          <p className="text-gray-700 dark:text-gray-300">{date}</p>
         )}
       </div>
     </div>
@@ -102,7 +106,14 @@ export default async function HomePage({
         </h3>
         <div>
           {games.map((game, index) => {
-            return <Row key={game.name} index={index} {...game} />;
+            return (
+              <Row
+                key={game.name}
+                index={index}
+                isLast={index === games.length - 1}
+                {...game}
+              />
+            );
           })}
         </div>
       </section>

@@ -27,7 +27,10 @@ export async function getTeamData(teamId: string) {
     // Probably will need to stitch together APIs or find a different way
     // This is for teams with black logos, so we invert the color of the image
     const color =
-      otherTeam.team.displayName === 'Iowa Hawkeyes' ? '000000' : 'TODO';
+      otherTeam.team.displayName ===
+      ('Iowa Hawkeyes' || 'Long Beach State Beach')
+        ? '000000'
+        : 'TODO';
 
     // Some teams don't have logos, use the default
     const logo = otherTeam.team.logos
