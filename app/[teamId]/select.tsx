@@ -1,13 +1,14 @@
 'use client';
 
-import { Team } from 'app/espn';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { Team } from 'schemas/teams';
 
 export default function TeamSelect({
   allTeams,
   teamId,
 }: {
-  allTeams: Team[];
+  allTeams: z.infer<typeof Team>[];
   teamId: string;
 }) {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function TeamSelect({
   return (
     <div className="mb-6 border border-gray-300 dark:border-gray-700 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
       {/* Safari web styles are still bad */}
+      {/* Maybe https://headlessui.com/react/combobox */}
       <select
         className="font-semibold px-2 py-3 w-full bg-white dark:bg-black text-gray-800 dark:text-gray-200 border-r-transparent border-r-8 rounded-md bg-none"
         defaultValue={teamId}
@@ -28,7 +30,7 @@ export default function TeamSelect({
         {/* Could be nice, if I had that data here */}
         {allTeams.map((team) => (
           <option key={team.id} value={team.id}>
-            {team.name}
+            {team.displayName}
           </option>
         ))}
       </select>

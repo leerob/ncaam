@@ -1,12 +1,8 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Game, getAllTeamIds, getTeamData } from 'app/espn';
+import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
-
-interface GameWithIndex extends Game {
-  index: number;
-}
 
 function Row({
   awayScore,
@@ -19,7 +15,7 @@ function Row({
   rank,
   teamId,
   winner,
-}: GameWithIndex) {
+}: any) {
   const formattedDate = date.toLocaleString('en-US', {
     day: '2-digit',
     month: '2-digit',
