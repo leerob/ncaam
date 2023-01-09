@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Schedule } from 'schemas/schedule';
+import { Scoreboard } from 'schemas/scoreboard';
 import { Team, Teams } from 'schemas/teams';
 
 export async function getTeamData(teamId: string) {
@@ -85,4 +86,56 @@ export async function getAllTeamIds() {
   // Sort teams alphabetically a-Z
   teams.sort((a, b) => (a.displayName > b.displayName ? 1 : -1));
   return teams;
+}
+
+export async function getTodaySchedule() {
+  // Always fetch schedule dynamically for latest scores
+  // ?dates=20230107
+  const res = await fetch(
+    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
+    { cache: 'no-store' }
+  );
+
+  const data: z.infer<typeof Scoreboard> = await res.json();
+
+  const games = data.events.map((event) => {
+    const homeTeam = event.competitions[0].competitors.find(
+      (competitor) => competitor.homeAway === 'home'
+    );
+    const awayTeam = event.competitions[0].competitors.find(
+      (competitor) => competitor.homeAway === 'away'
+    );
+
+    return {
+      homeTeam: formatTeamData(homeTeam),
+      awayTeam: formatTeamData(awayTeam),
+    };
+  });
+
+  return {
+    date: data.day.date,
+    games,
+  };
+}
+
+// Need to extract Schedule team type
+function formatTeamData(teamData: any) {
+  const darkLogoTeams = [
+    'Iowa Hawkeyes',
+    'Long Beach State Beach',
+    'Cincinnati Bearcats',
+  ];
+
+  return {
+    name: teamData.team.displayName,
+    teamId: teamData.team.id,
+    rank: teamData.curatedRank.current,
+    logo: teamData.team.logo
+      ? teamData.team.logo
+      : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
+    color: darkLogoTeams.includes(teamData.team.displayName) ? '000000' : 'N/A',
+    score: teamData.score,
+    winner: teamData.winner,
+    record: `(${teamData.records[0].summary},  ${teamData.records[3].summary})`,
+  };
 }

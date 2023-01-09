@@ -32,7 +32,7 @@ function Row({
           width={20}
           height={20}
           className={clsx('h-5 w-5', {
-            invert: color === '000000',
+            'dark:invert': color === '000000',
           })}
         />
         <Link href={`/${teamId}`} className="font-semibold ml-4">
@@ -93,7 +93,7 @@ export default async function HomePage({
             width={24}
             height={24}
             className={clsx('h-6 w-6', {
-              invert: color === '000000',
+              'dark:invert': color === '000000',
             })}
           />
           <h1 className="font-semibold text-2xl ml-2">{name}</h1>

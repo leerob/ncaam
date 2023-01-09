@@ -15,6 +15,7 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+    fetchCache: true,
   },
   redirects: () => [
     {
