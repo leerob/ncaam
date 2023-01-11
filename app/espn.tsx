@@ -107,6 +107,7 @@ export async function getTodaySchedule() {
     );
 
     return {
+      status: event.competitions[0].status.type.shortDetail,
       homeTeam: formatTeamData(homeTeam),
       awayTeam: formatTeamData(awayTeam),
     };
