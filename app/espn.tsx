@@ -4,6 +4,20 @@ import { Scoreboard } from 'schemas/scoreboard';
 import { Team, Teams } from 'schemas/teams';
 
 export async function getTeamData(teamId: string) {
+  if (teamId.includes('teamId')) {
+    // invalid teamId case needs to be handled correctly
+    // currently just throws error
+    return {
+      id: teamId,
+      name: '',
+      logo: '',
+      color: '',
+      record: '',
+      standing: '',
+      games: [],
+    };
+  }
+
   const res = await fetch(
     `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`,
     { next: { revalidate: 60 } }
