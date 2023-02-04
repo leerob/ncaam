@@ -4,6 +4,18 @@ import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { teamId: string };
+}) {
+  const { color } = await getTeamData(params.teamId);
+
+  return {
+    themeColor: `#${color}`,
+  };
+}
+
 function Row({
   awayScore,
   color,
