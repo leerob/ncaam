@@ -20,7 +20,7 @@ function Team({
 
   return (
     <Link href={`/${teamId}`}>
-      <div className="flex flex-row justify-between px-4 py-2">
+      <div className="flex flex-row justify-between px-4 py-2 h-[60px]">
         <div className="flex">
           <Image
             src={logo}
