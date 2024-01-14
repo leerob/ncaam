@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
 
-export async function generateMetadata({
+export async function generateViewport({
   params,
 }: {
   params: { teamId: string };

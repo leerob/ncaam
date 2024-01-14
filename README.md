@@ -23,13 +23,9 @@ This site was built live on my stream.
 
 This site using the following stack:
 
-- Framework - [Next.js 13](https://nextjs.org/13)
+- Framework - [Next.js](https://nextjs.org)
 - Language - [TypeScript](https://www.typescriptlang.org)
 - Styling - [Tailwind CSS](https://tailwindcss.com)
 - Analytics - [Vercel Analytics](https://vercel.com/analytics)
 - Linting - [ESLint](https://eslint.org)
 - Formatting - [Prettier](https://prettier.io)
-
-## Overview
-
-This template uses the new `app` directory (beta) in Next.js 13. This includes support for enhanced layouts, colocation of components, tests, and styles, component-level data fetching, and more.

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import DateSelect from 'app/scores/date-select';
 import { getTodaySchedule } from 'app/espn';
 
-export const runtime = 'experimental-edge';
+export const runtime = 'edge';
 
 function Team({
   color,
