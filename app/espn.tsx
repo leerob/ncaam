@@ -3,6 +3,7 @@ import { Schedule } from 'schemas/schedule';
 import { Scoreboard } from 'schemas/scoreboard';
 import { Team, Teams } from 'schemas/teams';
 import { ConferenceRankings } from 'schemas/conference';
+import { unstable_noStore } from 'next/cache';
 
 export async function getTeamData(teamId: string) {
   if (teamId.includes('teamId')) {
@@ -106,9 +107,9 @@ export async function getAllTeamIds() {
 export async function getTodaySchedule() {
   // Always fetch schedule dynamically for latest scores
   // ?dates=20230107
+  unstable_noStore();
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
-    { cache: 'no-store' }
+    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
   );
 
   const data: z.infer<typeof Scoreboard> = await res.json();
