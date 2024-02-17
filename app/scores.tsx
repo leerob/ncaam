@@ -1,10 +1,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import DateSelect from 'app/scores/date-select';
 import { getTodaySchedule } from 'app/espn';
-
-export const runtime = 'edge';
 
 function Team({
   color,
@@ -71,32 +68,28 @@ function Team({
   );
 }
 
-export default async function ScoresPage() {
+export async function Scores() {
   const { games } = await getTodaySchedule();
 
   return (
-    <section className="my-6 max-w-lg mx-auto px-4">
-      <h2 className="font-semibold text-xl">Scoreboard</h2>
-      {/* <DateSelect currentDate="20230108" /> */}
-      <div>
-        {games.map((game, index) => {
-          return (
-            <div
-              key={index}
-              className={clsx('pb-2', {
-                'border-b border-gray-200 dark:border-gray-800':
-                  index !== games.length - 1,
-              })}
-            >
-              <p className="flex justify-end mr-4 mt-4 text-sm text-gray-600 dark:text-gray-400">
-                {game.status}
-              </p>
-              <Team index={index} status={game.status} {...game.homeTeam} />
-              <Team index={index} status={game.status} {...game.awayTeam} />
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    <div>
+      {games.map((game, index) => {
+        return (
+          <div
+            key={index}
+            className={clsx('pb-2', {
+              'border-b border-gray-200 dark:border-gray-800':
+                index !== games.length - 1,
+            })}
+          >
+            <p className="flex justify-end mr-4 mt-4 text-sm text-gray-600 dark:text-gray-400">
+              {game.status}
+            </p>
+            <Team index={index} status={game.status} {...game.homeTeam} />
+            <Team index={index} status={game.status} {...game.awayTeam} />
+          </div>
+        );
+      })}
+    </div>
   );
 }

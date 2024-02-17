@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { Schedule } from 'schemas/schedule';
 import { Scoreboard } from 'schemas/scoreboard';
 import { Team, Teams } from 'schemas/teams';
+import { ConferenceRankings } from 'schemas/conference';
 
 export async function getTeamData(teamId: string) {
   if (teamId.includes('teamId')) {
@@ -133,14 +134,14 @@ export async function getTodaySchedule() {
   };
 }
 
+const darkLogoTeams = [
+  'Iowa Hawkeyes',
+  'Long Beach State Beach',
+  'Cincinnati Bearcats',
+];
+
 // Need to extract Schedule team type
 function formatTeamData(teamData: any) {
-  const darkLogoTeams = [
-    'Iowa Hawkeyes',
-    'Long Beach State Beach',
-    'Cincinnati Bearcats',
-  ];
-
   return {
     name: teamData.team.displayName,
     teamId: teamData.team.id,
@@ -153,4 +154,53 @@ function formatTeamData(teamData: any) {
     winner: teamData.winner,
     record: `(${teamData.records[0].summary},  ${teamData.records[3].summary})`,
   };
+}
+
+export async function getConferenceRankings() {
+  // Just Big 12 for now
+  const res = await fetch(
+    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2024',
+    {
+      next: {
+        revalidate: 60,
+      },
+    }
+  );
+
+  const data: z.infer<typeof ConferenceRankings> = await res.json();
+
+  let teamsData = data.standings.entries.map((entry) => {
+    const { team, stats } = entry;
+
+    const conferenceRecord =
+      stats.find((stat) => stat.name === 'vs. Conf.')?.displayValue || '';
+    const gamesBack =
+      stats.find((stat) => stat.name === 'gamesBehind')?.displayValue || '';
+    const wins = stats.find((stat) => stat.name === 'wins')?.displayValue || '';
+    const losses =
+      stats.find((stat) => stat.name === 'losses')?.displayValue || '';
+    const overallWinLoss = `${wins}-${losses}`;
+
+    return {
+      name: team.displayName,
+      teamId: team.id,
+      logo:
+        team.logos.length > 0
+          ? team.logos[0]?.href
+          : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
+      color: darkLogoTeams.includes(team.displayName) ? '000000' : 'N/A',
+      conferenceWinLoss: conferenceRecord,
+      gamesBack: gamesBack,
+      overallWinLoss: overallWinLoss,
+    };
+  });
+
+  teamsData.sort((a, b) => {
+    if (a.gamesBack === '-' && b.gamesBack !== '-') return -1;
+    if (a.gamesBack !== '-' && b.gamesBack === '-') return 1;
+    if (a.gamesBack === '-' && b.gamesBack === '-') return 0;
+    return parseFloat(a.gamesBack) - parseFloat(b.gamesBack);
+  });
+
+  return teamsData;
 }
