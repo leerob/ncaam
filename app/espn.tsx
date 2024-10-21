@@ -1,14 +1,78 @@
-import { z } from 'zod';
-import { Schedule } from 'schemas/schedule';
-import { Scoreboard } from 'schemas/scoreboard';
-import { Team, Teams } from 'schemas/teams';
-import { ConferenceRankings } from 'schemas/conference';
-import { unstable_noStore } from 'next/cache';
+import { unstable_cacheLife as cacheLife } from 'next/cache';
 
-export async function getTeamData(teamId: string) {
+export type TeamBasicInfo = {
+  id: string;
+  displayName: string;
+  logo?: string;
+  color?: string;
+};
+
+type GameData = {
+  date: string;
+  name: string;
+  teamId: string;
+  rank: number;
+  logo: string;
+  color: string;
+  homeScore?: number;
+  awayScore?: number;
+  winner?: boolean;
+};
+
+type TeamData = {
+  id: string;
+  name: string;
+  logo: string;
+  color: string;
+  record: string;
+  standing: string;
+  games: GameData[];
+};
+
+type CompetitorData = {
+  id: string;
+  homeAway: string;
+  team: TeamBasicInfo;
+  score?: {
+    value: number;
+    displayValue: string;
+  };
+  winner?: boolean;
+  records?: { summary: string }[];
+  curatedRank: { current: number };
+};
+
+type ConferenceRankingEntry = {
+  name: string;
+  teamId: string;
+  logo: string;
+  color: string;
+  conferenceWinLoss: string;
+  gamesBack: string;
+  overallWinLoss: string;
+};
+
+const DARK_LOGO_TEAMS = [
+  'Iowa Hawkeyes',
+  'Long Beach State Beach',
+  'Cincinnati Bearcats',
+];
+const DEFAULT_LOGO =
+  'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png';
+
+function getTeamColor(teamName: string): string {
+  return DARK_LOGO_TEAMS.includes(teamName) ? '000000' : 'N/A';
+}
+
+function getStat(stats: any[], name: string): string {
+  return stats.find((stat: any) => stat.name === name)?.displayValue ?? '';
+}
+
+export async function getTeamData(teamId: string): Promise<TeamData> {
+  'use cache';
+  cacheLife('weeks');
+
   if (teamId.includes('teamId')) {
-    // invalid teamId case needs to be handled correctly
-    // currently just throws error
     return {
       id: teamId,
       name: '',
@@ -22,37 +86,25 @@ export async function getTeamData(teamId: string) {
 
   const res = await fetch(
     `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`,
-    { next: { revalidate: 60 } }
   );
-  const data: z.infer<typeof Schedule> = await res.json();
 
-  const games = data.events.map((event) => {
-    const favoriteTeam = event.competitions[0].competitors.find(
-      (competitor) => competitor.team.id === teamId
-    );
-    const otherTeam = event.competitions[0].competitors.find(
-      (competitor) => competitor.team.id !== teamId
-    );
+  if (!res.ok) {
+    throw new Error(`Failed to fetch team data: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+
+  const games: GameData[] = data.events.map((event: any) => {
+    const [favoriteTeam, otherTeam] = event.competitions[0].competitors;
 
     if (!favoriteTeam || !otherTeam) {
       throw new Error(
-        'Expected to find both a favorite team and an opposing team in the event competitors'
+        'Expected to find both a favorite team and an opposing team in the event competitors',
       );
     }
 
-    // Unfortunately this data isn't on this API yet
-    // Probably will need to stitch together APIs or find a different way
-    // This is for teams with black logos, so we invert the color of the image
-    const color =
-      otherTeam.team.displayName ===
-      ('Iowa Hawkeyes' || 'Long Beach State Beach')
-        ? '000000'
-        : 'TODO';
-
-    // Some teams don't have logos, use the default
-    const logo = otherTeam.team.logos
-      ? otherTeam.team.logos[0].href
-      : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png';
+    const color = getTeamColor(otherTeam.team.displayName);
+    const logo = otherTeam.team.logos?.[0]?.href ?? DEFAULT_LOGO;
 
     return {
       date: event.competitions[0].status.type.shortDetail,
@@ -61,11 +113,8 @@ export async function getTeamData(teamId: string) {
       rank: otherTeam.curatedRank.current,
       logo,
       color,
-      // @ts-ignore: These are definitely there
       homeScore: favoriteTeam.score?.value,
-      // @ts-ignore: These are definitely there
       awayScore: otherTeam.score?.value,
-      // @ts-ignore: These are definitely there
       winner: favoriteTeam.winner,
     };
   });
@@ -81,46 +130,48 @@ export async function getTeamData(teamId: string) {
   };
 }
 
-export async function getAllTeamIds() {
-  const pagePromises: Promise<z.infer<typeof Teams>>[] = [];
-  for (let page = 1; page <= 8; page++) {
-    pagePromises.push(
-      fetch(
-        `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${page}`
-      ).then((res) => res.json())
-    );
-  }
+export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
+  'use cache';
+  cacheLife('weeks');
+
+  const pagePromises = Array.from({ length: 8 }, (_, i) =>
+    fetch(
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${i + 1}`,
+    ).then((res) => {
+      if (!res.ok) {
+        throw new Error(`Failed to fetch team IDs: ${res.statusText}`);
+      }
+      return res.json();
+    }),
+  );
 
   const dataArray = await Promise.all(pagePromises);
-  let teams: z.infer<typeof Team>[] = [];
-  for (const data of dataArray) {
-    teams = teams.concat(
-      data.sports[0].leagues[0].teams.map((team) => team.team)
-    );
-  }
+  const teams: TeamBasicInfo[] = dataArray.flatMap((data) =>
+    data.sports[0].leagues[0].teams.map((team: any) => team.team),
+  );
 
-  // Sort teams alphabetically a-Z
-  teams.sort((a, b) => (a.displayName > b.displayName ? 1 : -1));
-  return teams;
+  return teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
 }
 
 export async function getTodaySchedule() {
-  // Always fetch schedule dynamically for latest scores
-  // ?dates=20230107
-  unstable_noStore();
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
+    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
   );
 
-  const data: z.infer<typeof Scoreboard> = await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch today's schedule: ${res.statusText}`);
+  }
 
-  const games = data.events.map((event) => {
-    const homeTeam = event.competitions[0].competitors.find(
-      (competitor) => competitor.homeAway === 'home'
-    );
-    const awayTeam = event.competitions[0].competitors.find(
-      (competitor) => competitor.homeAway === 'away'
-    );
+  const data = await res.json();
+
+  const games = data.events.map((event: any) => {
+    const [homeTeam, awayTeam] = event.competitions[0].competitors;
+
+    if (!homeTeam || !awayTeam) {
+      throw new Error(
+        'Expected to find both home and away teams in the event competitors',
+      );
+    }
 
     return {
       status: event.competitions[0].status.type.shortDetail,
@@ -135,73 +186,57 @@ export async function getTodaySchedule() {
   };
 }
 
-const darkLogoTeams = [
-  'Iowa Hawkeyes',
-  'Long Beach State Beach',
-  'Cincinnati Bearcats',
-];
-
-// Need to extract Schedule team type
-function formatTeamData(teamData: any) {
+function formatTeamData(teamData: CompetitorData) {
   return {
     name: teamData.team.displayName,
     teamId: teamData.team.id,
     rank: teamData.curatedRank.current,
-    logo: teamData.team.logo
-      ? teamData.team.logo
-      : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
-    color: darkLogoTeams.includes(teamData.team.displayName) ? '000000' : 'N/A',
-    score: teamData.score,
+    logo: teamData.team.logo ?? DEFAULT_LOGO,
+    color: getTeamColor(teamData.team.displayName),
+    score: teamData.score?.value,
     winner: teamData.winner,
-    record: `(${teamData.records[0].summary},  ${teamData.records[3].summary})`,
+    record: teamData.records
+      ? `(${teamData.records[0].summary}, ${teamData.records[3]?.summary ?? 'N/A'})`
+      : 'N/A',
   };
 }
 
-export async function getConferenceRankings() {
-  // Just Big 12 for now
+export async function getConferenceRankings(): Promise<
+  ConferenceRankingEntry[]
+> {
+  'use cache';
+  cacheLife('hours');
+
   const res = await fetch(
     'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2024',
-    {
-      next: {
-        revalidate: 60,
-      },
-    }
   );
 
-  const data: z.infer<typeof ConferenceRankings> = await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch conference rankings: ${res.statusText}`);
+  }
 
-  let teamsData = data.standings.entries.map((entry) => {
+  const data = await res.json();
+
+  let teamsData = data.standings.entries.map((entry: any) => {
     const { team, stats } = entry;
-
-    const conferenceRecord =
-      stats.find((stat) => stat.name === 'vs. Conf.')?.displayValue || '';
-    const gamesBack =
-      stats.find((stat) => stat.name === 'gamesBehind')?.displayValue || '';
-    const wins = stats.find((stat) => stat.name === 'wins')?.displayValue || '';
-    const losses =
-      stats.find((stat) => stat.name === 'losses')?.displayValue || '';
-    const overallWinLoss = `${wins}-${losses}`;
 
     return {
       name: team.displayName,
       teamId: team.id,
-      logo:
-        team.logos.length > 0
-          ? team.logos[0]?.href
-          : 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
-      color: darkLogoTeams.includes(team.displayName) ? '000000' : 'N/A',
-      conferenceWinLoss: conferenceRecord,
-      gamesBack: gamesBack,
-      overallWinLoss: overallWinLoss,
+      logo: team.logos[0]?.href ?? DEFAULT_LOGO,
+      color: getTeamColor(team.displayName),
+      conferenceWinLoss: getStat(stats, 'vs. Conf.'),
+      gamesBack: getStat(stats, 'gamesBehind'),
+      overallWinLoss: `${getStat(stats, 'wins')}-${getStat(stats, 'losses')}`,
     };
   });
 
-  teamsData.sort((a, b) => {
-    if (a.gamesBack === '-' && b.gamesBack !== '-') return -1;
-    if (a.gamesBack !== '-' && b.gamesBack === '-') return 1;
-    if (a.gamesBack === '-' && b.gamesBack === '-') return 0;
-    return parseFloat(a.gamesBack) - parseFloat(b.gamesBack);
-  });
-
-  return teamsData;
+  return teamsData.sort(
+    (a: ConferenceRankingEntry, b: ConferenceRankingEntry) => {
+      if (a.gamesBack === '-' && b.gamesBack !== '-') return -1;
+      if (a.gamesBack !== '-' && b.gamesBack === '-') return 1;
+      if (a.gamesBack === '-' && b.gamesBack === '-') return 0;
+      return parseFloat(a.gamesBack) - parseFloat(b.gamesBack);
+    },
+  );
 }

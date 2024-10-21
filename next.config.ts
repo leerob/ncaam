@@ -1,7 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+export default {
   experimental: {
     ppr: true,
+    dynamicIO: true,
   },
   images: {
     // Example: https://a.espncdn.com/i/teamlogos/ncaa/500/66.png
@@ -12,10 +12,9 @@ const nextConfig = {
         hostname: 'a.espncdn.com',
         port: '',
         pathname: '/i/teamlogos/**',
+        search: '',
       },
     ],
     formats: ['image/avif', 'image/webp'],
   },
 };
-
-module.exports = nextConfig;

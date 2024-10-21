@@ -1,14 +1,13 @@
 'use client';
 
-import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { Team } from 'schemas/teams';
+import { TeamBasicInfo } from 'app/espn';
 
 export default function TeamSelect({
   allTeams,
   teamId,
 }: {
-  allTeams: z.infer<typeof Team>[];
+  allTeams: TeamBasicInfo[];
   teamId: string;
 }) {
   const router = useRouter();

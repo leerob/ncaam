@@ -17,7 +17,7 @@ function TeamSkeleton() {
   );
 }
 
-export async function ScoresLoading() {
+export function ScoresLoading() {
   const rows = Array.from({ length: 10 });
 
   return (

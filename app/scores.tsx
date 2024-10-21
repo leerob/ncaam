@@ -73,7 +73,7 @@ export async function Scores() {
 
   return (
     <div>
-      {games.map((game, index) => {
+      {games.map((game: any, index: number) => {
         return (
           <div
             key={index}

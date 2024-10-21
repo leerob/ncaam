@@ -1,7 +1,6 @@
 import './globals.css';
 
 export const metadata = {
-  metadataBase: new URL('https://nccam.vercel.app'),
   title: {
     default: 'NCCAM Scores & Schedules',
     template: '%s | NCCAM Scores & Schedules',
@@ -10,14 +9,6 @@ export const metadata = {
   icons: {
     shortcut:
       'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏀</text></svg>',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  twitter: {
-    title: 'NCCAM Scores & Schedules',
-    card: 'summary_large_image',
   },
 };
 

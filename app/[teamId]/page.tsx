@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
 
-export async function generateViewport({
-  params,
-}: {
-  params: { teamId: string };
-}) {
+export async function generateViewport(
+  props: {
+    params: Promise<{ teamId: string }>;
+  }
+) {
+  const params = await props.params;
   const { color } = await getTeamData(params.teamId);
 
   return {
@@ -82,11 +83,12 @@ function Row({
   );
 }
 
-export default async function HomePage({
-  params,
-}: {
-  params: { teamId: string };
-}) {
+export default async function HomePage(
+  props: {
+    params: Promise<{ teamId: string }>;
+  }
+) {
+  const params = await props.params;
   const [team, allTeams] = await Promise.all([
     getTeamData(params.teamId),
     getAllTeamIds(),
