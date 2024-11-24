@@ -200,7 +200,7 @@ function formatTeamData(teamData: CompetitorData) {
     rank: teamData.curatedRank.current,
     logo: teamData.team.logo ?? DEFAULT_LOGO,
     color: getTeamColor(teamData.team.displayName),
-    score: teamData.score?.value,
+    score: teamData.score,
     winner: teamData.winner,
     record: teamData.records
       ? `(${teamData.records[0].summary}, ${teamData.records[3]?.summary ?? 'N/A'})`
