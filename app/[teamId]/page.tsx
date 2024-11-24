@@ -70,10 +70,17 @@ function Row({
   );
 }
 
+export async function generateStaticParams() {
+  const allTeams = await getAllTeamIds();
+
+  return allTeams.map((team) => ({
+    teamId: team.id,
+  }));
+}
+
 export default async function HomePage(props: {
   params: Promise<{ teamId: string }>;
 }) {
-  'use cache';
   const params = await props.params;
   const [team, allTeams] = await Promise.all([
     getTeamData(params.teamId),
