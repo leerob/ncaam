@@ -4,19 +4,6 @@ import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
 
-export async function generateViewport(
-  props: {
-    params: Promise<{ teamId: string }>;
-  }
-) {
-  const params = await props.params;
-  const { color } = await getTeamData(params.teamId);
-
-  return {
-    themeColor: `#${color}`,
-  };
-}
-
 function Row({
   awayScore,
   color,
@@ -83,11 +70,10 @@ function Row({
   );
 }
 
-export default async function HomePage(
-  props: {
-    params: Promise<{ teamId: string }>;
-  }
-) {
+export default async function HomePage(props: {
+  params: Promise<{ teamId: string }>;
+}) {
+  'use cache';
   const params = await props.params;
   const [team, allTeams] = await Promise.all([
     getTeamData(params.teamId),
@@ -97,6 +83,7 @@ export default async function HomePage(
 
   return (
     <>
+      <meta name="theme-color" content={`#${color}`} />
       <div className="h-4" style={{ background: `#${color}` }} />
       <section className="my-6 max-w-lg mx-auto px-4">
         <div className="flex items-center">
@@ -122,7 +109,7 @@ export default async function HomePage(
           {games.map((game, index) => {
             return (
               <Row
-                key={game.name}
+                key={game.id}
                 index={index}
                 isLast={index === games.length - 1}
                 {...game}
