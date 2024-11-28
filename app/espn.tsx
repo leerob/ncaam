@@ -159,7 +159,7 @@ export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
 
 export async function getTodaySchedule() {
   'use cache';
-  cacheLife('days');
+  cacheLife('seconds');
 
   const res = await fetch(
     'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
