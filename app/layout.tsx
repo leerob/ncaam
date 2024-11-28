@@ -39,7 +39,7 @@ export default function RootLayout({
 
 function BottomNav() {
   return (
-    <div className="max-w-screen-md mx-auto h-full flex items-center justify-around px-6 p-b-[env(safe-area-inset-bottom)]">
+    <div className="max-w-screen-md mx-auto h-full flex items-center justify-around px-6 pb-[env(safe-area-inset-bottom)]">
       <Link href="/" className="flex flex-col items-center space-y-1">
         <CalendarIcon className="h-5 w-5" />
         <span className="text-xs">Schedule</span>
