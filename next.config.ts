@@ -2,6 +2,7 @@ export default {
   experimental: {
     ppr: true,
     dynamicIO: true,
+    inlineCss: true,
     turbo: {
       unstablePersistentCaching: true,
     },
