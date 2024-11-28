@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 function TeamSkeleton() {
   return (
-    <div className="flex flex-row justify-between px-4 py-2 h-[60px] motion-safe:animate-pulse">
+    <div className="flex flex-row justify-between py-2 h-[60px] motion-safe:animate-pulse">
       <div className="flex">
         <div className="h-6 w-6 mt-[2px] bg-gray-300 dark:bg-gray-700 rounded-full" />
         <div className="flex flex-col ml-4 leading-4 gap-y-1">
