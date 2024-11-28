@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import './globals.css';
+import { CalendarIcon, ListIcon, TableIcon } from 'lucide-react';
 
 export const metadata = {
   title: {
@@ -16,30 +18,32 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased">
       <body className="flex flex-col min-h-screen text-black dark:text-white bg-white dark:bg-black">
-        <div className="flex-grow overflow-y-scroll h-[calc(100vh_-_48px)] border-b border-gray-200 dark:border-gray-800">
+        <div className="flex-grow overflow-y-scroll h-[calc(100vh_-_48px)] border-b border-gray-200 dark:border-gray-800 pb-16 md:pb-0">
           {children}
         </div>
-        <footer className="text-gray-600 dark:text-gray-400 text-xs mx-auto text-center pt-4 h-[48px]">
-          {'Built using the '}
-          <a
-            href="https://espn.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border-b border-gray-400 dark:border-gray-600 hover:border-gray-600 hover:dark:border-gray-400 hover:text-gray-800 hover:dark:text-gray-200 transition-all"
-          >
-            ESPN API
-          </a>
-          {', Next.js, and Vercel. '}
-          <a
-            href="https://github.com/leerob/ncaam"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border-b border-gray-400 dark:border-gray-600 hover:border-gray-600 hover:dark:border-gray-400 hover:text-gray-800 hover:dark:text-gray-200 transition-all"
-          >
-            View the code.
-          </a>
-        </footer>
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
+          <BottomNav />
+        </nav>
       </body>
     </html>
+  );
+}
+
+function BottomNav() {
+  return (
+    <div className="max-w-screen-md mx-auto h-full flex items-center justify-around px-6">
+      <Link href="/" className="flex flex-col items-center space-y-1">
+        <CalendarIcon className="h-5 w-5" />
+        <span className="text-xs">Schedule</span>
+      </Link>
+      <Link href="/scores" className="flex flex-col items-center space-y-1">
+        <ListIcon className="h-5 w-5" />
+        <span className="text-xs">Scores</span>
+      </Link>
+      <Link href="/conference" className="flex flex-col items-center space-y-1">
+        <TableIcon className="h-5 w-5" />
+        <span className="text-xs">Conference</span>
+      </Link>
+    </div>
   );
 }

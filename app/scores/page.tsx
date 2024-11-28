@@ -1,3 +1,5 @@
+import { Scores } from './scores';
+import { Suspense } from 'react';
 import clsx from 'clsx';
 
 function TeamSkeleton() {
@@ -17,7 +19,7 @@ function TeamSkeleton() {
   );
 }
 
-export function ScoresLoading() {
+function ScoresLoading() {
   const rows = Array.from({ length: 10 });
 
   return (
@@ -38,5 +40,16 @@ export function ScoresLoading() {
         );
       })}
     </div>
+  );
+}
+
+export default function ScoresPage() {
+  return (
+    <section className="w-full mx-auto p-6">
+      <h2 className="font-semibold text-2xl">Scores</h2>
+      <Suspense fallback={<ScoresLoading />}>
+        <Scores />
+      </Suspense>
+    </section>
   );
 }

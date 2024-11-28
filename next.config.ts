@@ -2,6 +2,9 @@ export default {
   experimental: {
     ppr: true,
     dynamicIO: true,
+    turbo: {
+      unstablePersistentCaching: true,
+    },
   },
   images: {
     // Example: https://a.espncdn.com/i/teamlogos/ncaa/500/66.png

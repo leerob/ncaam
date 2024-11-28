@@ -71,7 +71,7 @@ function getStat(stats: any[], name: string): string {
 
 export async function getTeamData(teamId: string): Promise<TeamData> {
   'use cache';
-  cacheLife('weeks');
+  cacheLife('hours');
 
   if (teamId.includes('teamId')) {
     return {
@@ -136,7 +136,7 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
 
 export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
   'use cache';
-  cacheLife('weeks');
+  cacheLife('hours');
 
   const pagePromises = Array.from({ length: 8 }, (_, i) =>
     fetch(
