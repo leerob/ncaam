@@ -211,7 +211,6 @@ export async function getTodaySchedule() {
       timeZone: 'America/Chicago',
     }) + ' CT';
 
-  console.log(formattedDate);
   return {
     date: formattedTime,
     games,
