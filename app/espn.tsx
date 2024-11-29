@@ -109,9 +109,21 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
     const color = getTeamColor(otherTeam.team.displayName);
     const logo = otherTeam.team.logos?.[0]?.href ?? DEFAULT_LOGO;
 
+    const date = new Date(event.competitions[0].date);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    const formattedTime =
+      date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Chicago',
+      }) + ' CT';
+
     return {
       id: event.competitions[0].id,
-      date: event.competitions[0].status.type.shortDetail,
+      date: `${formattedDate} - ${formattedTime}`,
       name: otherTeam.team.displayName,
       teamId: otherTeam.team.id,
       rank: otherTeam.curatedRank.current,
@@ -187,8 +199,21 @@ export async function getTodaySchedule() {
     };
   });
 
+  const date = new Date(data.eventsDate.date);
+  const formattedDate = date.toLocaleDateString('en-US', {
+    month: 'numeric',
+    day: 'numeric',
+  });
+  const formattedTime =
+    date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    }) + ' CT';
+
+  console.log(formattedDate);
   return {
-    date: data.day.date,
+    date: formattedTime,
     games,
   };
 }

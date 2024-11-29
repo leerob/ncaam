@@ -70,7 +70,7 @@ function Team({
 }
 
 export async function Scores() {
-  const { games } = await getTodaySchedule();
+  const { games, date } = await getTodaySchedule();
 
   return (
     <div>
@@ -84,7 +84,7 @@ export async function Scores() {
             })}
           >
             <p className="flex justify-end mt-4 text-sm text-gray-600 dark:text-gray-400">
-              {game.status}
+              {game.status.includes('EST') ? date : game.status}
             </p>
             <Team index={index} status={game.status} {...game.homeTeam} />
             <Team index={index} status={game.status} {...game.awayTeam} />
