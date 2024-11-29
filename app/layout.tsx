@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import './globals.css';
 import { BottomNav } from './navbar';
 
@@ -29,7 +30,9 @@ export default function RootLayout({
           {children}
         </div>
         <nav className="md:hidden fixed bottom-0 left-0 right-0 h-[80px] bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
-          <BottomNav />
+          <Suspense fallback={null}>
+            <BottomNav />
+          </Suspense>
         </nav>
       </body>
     </html>
