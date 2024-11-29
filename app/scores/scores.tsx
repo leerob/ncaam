@@ -15,7 +15,7 @@ function Team({
   winner,
   status,
 }: any) {
-  const faded = winner === false && status === 'Final';
+  const faded = winner === false && status.includes('Final');
 
   return (
     <Link href={`/${teamId}`}>
@@ -34,7 +34,8 @@ function Team({
           <div className="flex flex-col ml-4 leading-4 gap-y-1">
             <p
               className={clsx('font-semibold', {
-                'text-gray-500': faded,
+                'text-gray-500 line-through decoration-gray-500 decoration-1':
+                  faded,
                 'text-black dark:text-white': !faded,
               })}
             >

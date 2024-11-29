@@ -3,9 +3,6 @@ export default {
     ppr: true,
     dynamicIO: true,
     inlineCss: true,
-    turbo: {
-      unstablePersistentCaching: true,
-    },
   },
   images: {
     // Example: https://a.espncdn.com/i/teamlogos/ncaa/500/66.png

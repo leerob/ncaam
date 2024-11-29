@@ -14,10 +14,9 @@ function RankingRow({
 }: any) {
   return (
     <div
-      className={clsx(
-        'flex flex-col min-[450px]:flex-row justify-between px-0 min-[450px]:px-4 py-2',
-        { 'border-b border-gray-200 dark:border-gray-800': !isLast }
-      )}
+      className={clsx('flex flex-row justify-between px-0 py-2', {
+        'border-b border-gray-200 dark:border-gray-800': !isLast,
+      })}
     >
       <div className="flex">
         <Image
@@ -49,7 +48,7 @@ export default async function ConferencePage() {
   return (
     <section className="w-full mx-auto p-6">
       <h2 className="font-semibold text-2xl">Conference</h2>
-      <h3 className="text-sm text-gray-700 dark:text-gray-300 mb-2 flex justify-end pr-4">
+      <h3 className="text-sm text-gray-700 dark:text-gray-300 mb-2 flex justify-end">
         GB
       </h3>
       <div>
