@@ -12,7 +12,7 @@ export function BottomNav() {
       <Link
         href="/"
         className={`flex flex-col items-center space-y-1 mb-4 ${
-          pathname === '/' ? 'text-black' : 'text-gray-400'
+          pathname === '/' ? 'dark:text-white text-black' : 'text-gray-400'
         }`}
       >
         <CalendarIcon className="h-5 w-5" />

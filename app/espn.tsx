@@ -192,27 +192,27 @@ export async function getTodaySchedule() {
       );
     }
 
+    const date = new Date(event.date);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    const formattedTime =
+      date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Chicago',
+      }) + ' CT';
+
     return {
       status: event.competitions[0].status.type.shortDetail,
+      date: `${formattedDate} - ${formattedTime}`,
       homeTeam: formatTeamData(homeTeam),
       awayTeam: formatTeamData(awayTeam),
     };
   });
 
-  const date = new Date(data.eventsDate.date);
-  const formattedDate = date.toLocaleDateString('en-US', {
-    month: 'numeric',
-    day: 'numeric',
-  });
-  const formattedTime =
-    date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
-    }) + ' CT';
-
   return {
-    date: formattedTime,
     games,
   };
 }
