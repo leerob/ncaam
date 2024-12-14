@@ -21,7 +21,7 @@ function Row({
     <div
       className={clsx(
         'flex flex-col min-[450px]:flex-row justify-between px-0 min-[450px]:px-4 py-2',
-        { 'border-b border-gray-200 dark:border-gray-800': !isLast }
+        { 'border-b border-gray-200 dark:border-gray-800': !isLast },
       )}
     >
       <div className="flex">

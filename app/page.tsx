@@ -22,8 +22,8 @@ function Row({
   return (
     <div
       className={clsx(
-        'flex flex-col min-[450px]:flex-row justify-between px-0 min-[450px]:px-4 py-2',
-        { 'border-b border-gray-200 dark:border-gray-800': !isLast }
+        'flex flex-col min-[450px]:flex-row justify-between px-0 py-2',
+        { 'border-b border-gray-200 dark:border-gray-800': !isLast },
       )}
     >
       <div className="flex">
@@ -78,6 +78,7 @@ async function Schedule() {
     getAllTeamIds(),
   ]);
   const { name, record, color, standing, games, logo } = team;
+  const nextGame = games.find((game) => game.homeScore === undefined);
 
   return (
     <section className="w-full mx-auto p-6">
@@ -97,6 +98,11 @@ async function Schedule() {
       <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>
       <TeamSelect allTeams={allTeams} teamId={'66'} />
       <h2 className="font-semibold text-xl">Schedule</h2>
+      <h3 className="font-semibold text-gray-700 dark:text-gray-300">Next</h3>
+      {nextGame && <Row isLast {...nextGame} />}
+      <h3 className="font-semibold text-gray-700 dark:text-gray-300 mt-4">
+        Full
+      </h3>
       <div>
         {games.map((game, index) => (
           <Row

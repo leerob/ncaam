@@ -86,7 +86,7 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
   }
 
   const res = await fetch(
-    `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`,
   );
 
   if (!res.ok) {
@@ -102,7 +102,7 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
 
     if (!favoriteTeam || !otherTeam) {
       throw new Error(
-        'Expected to find both the favorite team and an opposing team in the event competitors'
+        'Expected to find both the favorite team and an opposing team in the event competitors',
       );
     }
 
@@ -114,12 +114,11 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
       month: 'numeric',
       day: 'numeric',
     });
-    const formattedTime =
-      date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago',
-      }) + ' CT';
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    });
 
     return {
       id: event.competitions[0].id,
@@ -152,18 +151,18 @@ export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
 
   const pagePromises = Array.from({ length: 8 }, (_, i) =>
     fetch(
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${i + 1}`
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${i + 1}`,
     ).then((res) => {
       if (!res.ok) {
         throw new Error(`Failed to fetch team IDs: ${res.statusText}`);
       }
       return res.json();
-    })
+    }),
   );
 
   const dataArray = await Promise.all(pagePromises);
   const teams: TeamBasicInfo[] = dataArray.flatMap((data) =>
-    data.sports[0].leagues[0].teams.map((team: any) => team.team)
+    data.sports[0].leagues[0].teams.map((team: any) => team.team),
   );
 
   return teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
@@ -174,7 +173,7 @@ export async function getTodaySchedule() {
   cacheLife('seconds');
 
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
+    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
   );
 
   if (!res.ok) {
@@ -188,7 +187,7 @@ export async function getTodaySchedule() {
 
     if (!homeTeam || !awayTeam) {
       throw new Error(
-        'Expected to find both home and away teams in the event competitors'
+        'Expected to find both home and away teams in the event competitors',
       );
     }
 
@@ -197,12 +196,11 @@ export async function getTodaySchedule() {
       month: 'numeric',
       day: 'numeric',
     });
-    const formattedTime =
-      date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago',
-      }) + ' CT';
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    });
 
     return {
       status: event.competitions[0].status.type.shortDetail,
@@ -239,7 +237,7 @@ export async function getConferenceRankings(): Promise<
   cacheLife('hours');
 
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2024'
+    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2024',
   );
 
   if (!res.ok) {
@@ -268,6 +266,6 @@ export async function getConferenceRankings(): Promise<
       if (a.gamesBack !== '-' && b.gamesBack === '-') return 1;
       if (a.gamesBack === '-' && b.gamesBack === '-') return 0;
       return parseFloat(a.gamesBack) - parseFloat(b.gamesBack);
-    }
+    },
   );
 }

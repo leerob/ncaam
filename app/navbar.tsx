@@ -21,7 +21,9 @@ export function BottomNav() {
       <Link
         href="/scores"
         className={`flex flex-col items-center space-y-1 mb-4 ${
-          pathname === '/scores' ? 'text-black' : 'text-gray-400'
+          pathname === '/scores'
+            ? 'dark:text-white text-black'
+            : 'text-gray-400'
         }`}
       >
         <RadioIcon className="h-5 w-5" />
@@ -30,7 +32,9 @@ export function BottomNav() {
       <Link
         href="/conference"
         className={`flex flex-col items-center space-y-1 mb-4 ${
-          pathname === '/conference' ? 'text-black' : 'text-gray-400'
+          pathname === '/conference'
+            ? 'dark:text-white text-black'
+            : 'text-gray-400'
         }`}
       >
         <TrophyIcon className="h-5 w-5" />
