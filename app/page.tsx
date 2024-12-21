@@ -93,6 +93,11 @@ async function Schedule() {
             'dark:invert': color === '000000',
           })}
         />
+        {nextGame?.selectedTeamRank !== 99 ? (
+          <span className="text-sm uppercase font-normal text-gray-500 ml-2">
+            {nextGame?.selectedTeamRank}
+          </span>
+        ) : null}
         <h1 className="font-semibold text-2xl ml-2">{name}</h1>
       </div>
       <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>

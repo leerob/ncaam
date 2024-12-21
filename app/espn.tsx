@@ -12,9 +12,10 @@ type GameData = {
   date: string;
   name: string;
   teamId: string;
-  rank: number;
   logo: string;
   color: string;
+  rank: number;
+  selectedTeamRank: number;
   homeScore?: number;
   awayScore?: number;
   winner?: boolean;
@@ -126,6 +127,7 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
       name: otherTeam.team.displayName,
       teamId: otherTeam.team.id,
       rank: otherTeam.curatedRank.current,
+      selectedTeamRank: favoriteTeam.curatedRank.current,
       logo,
       color,
       homeScore: favoriteTeam.score?.value,
