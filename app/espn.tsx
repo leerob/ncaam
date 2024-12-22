@@ -15,7 +15,7 @@ type GameData = {
   logo: string;
   color: string;
   rank: number;
-  selectedTeamRank: number;
+  favoriteTeamRank: number;
   homeScore?: number;
   awayScore?: number;
   winner?: boolean;
@@ -70,6 +70,35 @@ function getStat(stats: any[], name: string): string {
   return stats.find((stat: any) => stat.name === name)?.displayValue ?? '';
 }
 
+function formatDateTime(date: Date) {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const isToday = date.toDateString() === today.toDateString();
+  const isTomorrow = date.toDateString() === tomorrow.toDateString();
+
+  const formattedTime = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'America/Chicago',
+  });
+
+  let formattedDate;
+  if (isToday) {
+    formattedDate = 'Today';
+  } else if (isTomorrow) {
+    formattedDate = 'Tomorrow';
+  } else {
+    formattedDate = date.toLocaleDateString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+    });
+  }
+
+  return `${formattedDate} - ${formattedTime}`;
+}
+
 export async function getTeamData(teamId: string): Promise<TeamData> {
   'use cache';
   cacheLife('hours');
@@ -111,19 +140,10 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
     const logo = otherTeam.team.logos?.[0]?.href ?? DEFAULT_LOGO;
 
     const date = new Date(event.competitions[0].date);
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-    });
-    const formattedTime = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
-    });
 
     return {
       id: event.competitions[0].id,
-      date: `${formattedDate} - ${formattedTime}`,
+      date: formatDateTime(date),
       name: otherTeam.team.displayName,
       teamId: otherTeam.team.id,
       rank: otherTeam.curatedRank.current,
@@ -194,19 +214,10 @@ export async function getTodaySchedule() {
     }
 
     const date = new Date(event.date);
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-    });
-    const formattedTime = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
-    });
 
     return {
       status: event.competitions[0].status.type.shortDetail,
-      date: `${formattedDate} - ${formattedTime}`,
+      date: formatDateTime(date),
       homeTeam: formatTeamData(homeTeam),
       awayTeam: formatTeamData(awayTeam),
     };
