@@ -15,7 +15,7 @@ type GameData = {
   logo: string;
   color: string;
   rank: number;
-  favoriteTeamRank: number;
+  selectedTeamRank: number;
   homeScore?: number;
   awayScore?: number;
   winner?: boolean;
