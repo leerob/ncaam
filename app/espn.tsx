@@ -250,7 +250,7 @@ export async function getConferenceRankings(): Promise<
   cacheLife('hours');
 
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2024',
+    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2025',
   );
 
   if (!res.ok) {
