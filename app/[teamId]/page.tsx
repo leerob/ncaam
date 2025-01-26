@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
+import { unstable_cacheLife as cacheLife } from 'next/cache';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
 
@@ -15,13 +16,13 @@ function Row({
   name,
   rank,
   teamId,
-  winner,
+  winner
 }: any) {
   return (
     <div
       className={clsx(
         'flex flex-col min-[450px]:flex-row justify-between px-0 min-[450px]:px-4 py-2',
-        { 'border-b border-gray-200 dark:border-gray-800': !isLast },
+        { 'border-b border-gray-200 dark:border-gray-800': !isLast }
       )}
     >
       <div className="flex">
@@ -32,7 +33,7 @@ function Row({
           width={20}
           height={20}
           className={clsx('h-5 w-5', {
-            'dark:invert': color === '000000',
+            'dark:invert': color === '000000'
           })}
         />
         <Link href={`/${teamId}`} className="font-semibold ml-4">
@@ -74,17 +75,20 @@ export async function generateStaticParams() {
   const allTeams = await getAllTeamIds();
 
   return allTeams.map((team) => ({
-    teamId: team.id,
+    teamId: team.id
   }));
 }
 
 export default async function HomePage(props: {
   params: Promise<{ teamId: string }>;
 }) {
+  'use cache';
+  cacheLife('hours');
+
   const params = await props.params;
   const [team, allTeams] = await Promise.all([
     getTeamData(params.teamId),
-    getAllTeamIds(),
+    getAllTeamIds()
   ]);
   const { name, record, color, standing, games, logo } = team;
 
@@ -101,7 +105,7 @@ export default async function HomePage(props: {
             width={24}
             height={24}
             className={clsx('h-6 w-6', {
-              'dark:invert': color === '000000',
+              'dark:invert': color === '000000'
             })}
           />
           <h1 className="font-semibold text-2xl ml-2">{name}</h1>

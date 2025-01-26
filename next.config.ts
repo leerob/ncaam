@@ -1,8 +1,8 @@
 export default {
   experimental: {
     ppr: true,
-    dynamicIO: true,
-    inlineCss: true,
+    useCache: true,
+    inlineCss: true
   },
   images: {
     // Example: https://a.espncdn.com/i/teamlogos/ncaa/500/66.png
@@ -13,9 +13,9 @@ export default {
         hostname: 'a.espncdn.com',
         port: '',
         pathname: '/i/teamlogos/**',
-        search: '',
-      },
+        search: ''
+      }
     ],
-    formats: ['image/avif', 'image/webp'],
-  },
+    formats: ['image/avif', 'image/webp']
+  }
 };

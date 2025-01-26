@@ -1,7 +1,8 @@
-import { getConferenceRankings } from 'app/espn';
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getConferenceRankings } from 'app/espn';
+import { unstable_cacheLife as cacheLife } from 'next/cache';
 
 function RankingRow({
   color,
@@ -10,12 +11,12 @@ function RankingRow({
   isLast,
   logo,
   name,
-  teamId,
+  teamId
 }: any) {
   return (
     <div
       className={clsx('flex flex-row justify-between px-0 py-2', {
-        'border-b border-gray-200 dark:border-gray-800': !isLast,
+        'border-b border-gray-200 dark:border-gray-800': !isLast
       })}
     >
       <div className="flex">
@@ -26,7 +27,7 @@ function RankingRow({
           width={20}
           height={20}
           className={clsx('h-5 w-5', {
-            'dark:invert': color === '000000',
+            'dark:invert': color === '000000'
           })}
         />
         <Link href={`/${teamId}`} className="font-semibold ml-4">
@@ -43,6 +44,9 @@ function RankingRow({
 }
 
 export default async function ConferencePage() {
+  'use cache';
+  cacheLife('minutes');
+
   const confRankings = await getConferenceRankings();
 
   return (

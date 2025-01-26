@@ -1,5 +1,3 @@
-import { unstable_cacheLife as cacheLife } from 'next/cache';
-
 export type TeamBasicInfo = {
   id: string;
   displayName: string;
@@ -153,9 +151,6 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
     };
   });
 
-  ('use cache');
-  cacheLife('hours');
-
   return {
     id: teamId,
     name: data.team.displayName,
@@ -183,9 +178,6 @@ export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
   const teams: TeamBasicInfo[] = dataArray.flatMap((data) =>
     data.sports[0].leagues[0].teams.map((team: any) => team.team)
   );
-
-  ('use cache');
-  cacheLife('hours');
 
   return teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
 }
@@ -219,9 +211,6 @@ export async function getTodaySchedule() {
       awayTeam: formatTeamData(awayTeam)
     };
   });
-
-  ('use cache');
-  cacheLife('seconds');
 
   return {
     games
@@ -269,9 +258,6 @@ export async function getConferenceRankings(): Promise<
       overallWinLoss: `${getStat(stats, 'wins')}-${getStat(stats, 'losses')}`
     };
   });
-
-  ('use cache');
-  cacheLife('hours');
 
   return teamsData.sort(
     (a: ConferenceRankingEntry, b: ConferenceRankingEntry) => {

@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getTodaySchedule } from 'app/espn';
+import { unstable_cacheLife as cacheLife } from 'next/cache';
 
 function Team({
   color,
@@ -13,7 +14,7 @@ function Team({
   record,
   teamId,
   winner,
-  status,
+  status
 }: any) {
   const faded = winner === false && status.includes('Final');
 
@@ -28,7 +29,7 @@ function Team({
             width={24}
             height={24}
             className={clsx('h-6 w-6 mt-[2px]', {
-              'dark:invert': color === '000000',
+              'dark:invert': color === '000000'
             })}
           />
           <div className="flex flex-col ml-4 leading-4 gap-y-1">
@@ -36,7 +37,7 @@ function Team({
               className={clsx('font-semibold', {
                 'text-gray-500 line-through decoration-gray-500 decoration-1':
                   faded,
-                'text-black dark:text-white': !faded,
+                'text-black dark:text-white': !faded
               })}
             >
               {rank !== 99 ? (
@@ -49,7 +50,7 @@ function Team({
             <p
               className={clsx('text-sm', {
                 'text-gray-500': faded,
-                'text-gray-600 dark:text-gray-400': !faded,
+                'text-gray-600 dark:text-gray-400': !faded
               })}
             >
               {record}
@@ -59,7 +60,7 @@ function Team({
         <div
           className={clsx('flex', {
             'text-gray-500': faded,
-            'text-gray-900 dark:text-gray-100': !faded,
+            'text-gray-900 dark:text-gray-100': !faded
           })}
         >
           <p className="leading-normal font-semibold text-xl">{score}</p>
@@ -70,6 +71,9 @@ function Team({
 }
 
 export async function Scores() {
+  'use cache';
+  cacheLife('minutes');
+
   const { games } = await getTodaySchedule();
 
   return (
@@ -80,7 +84,7 @@ export async function Scores() {
             key={index}
             className={clsx('pb-2', {
               'border-b border-gray-200 dark:border-gray-800':
-                index !== games.length - 1,
+                index !== games.length - 1
             })}
           >
             <p className="flex justify-end mt-4 text-sm text-gray-600 dark:text-gray-400">
