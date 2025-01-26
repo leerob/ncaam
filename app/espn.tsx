@@ -57,7 +57,7 @@ type ConferenceRankingEntry = {
 const DARK_LOGO_TEAMS = [
   'Iowa Hawkeyes',
   'Long Beach State Beach',
-  'Cincinnati Bearcats',
+  'Cincinnati Bearcats'
 ];
 const DEFAULT_LOGO =
   'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png';
@@ -81,7 +81,7 @@ function formatDateTime(date: Date) {
   const formattedTime = date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
-    timeZone: 'America/Chicago',
+    timeZone: 'America/Chicago'
   });
 
   let formattedDate;
@@ -92,7 +92,7 @@ function formatDateTime(date: Date) {
   } else {
     formattedDate = date.toLocaleDateString('en-US', {
       month: 'numeric',
-      day: 'numeric',
+      day: 'numeric'
     });
   }
 
@@ -100,9 +100,6 @@ function formatDateTime(date: Date) {
 }
 
 export async function getTeamData(teamId: string): Promise<TeamData> {
-  'use cache';
-  cacheLife('hours');
-
   if (teamId.includes('teamId')) {
     return {
       id: teamId,
@@ -111,12 +108,12 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
       color: '',
       record: '',
       standing: '',
-      games: [],
+      games: []
     };
   }
 
   const res = await fetch(
-    `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`,
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}/schedule`
   );
 
   if (!res.ok) {
@@ -132,7 +129,7 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
 
     if (!favoriteTeam || !otherTeam) {
       throw new Error(
-        'Expected to find both the favorite team and an opposing team in the event competitors',
+        'Expected to find both the favorite team and an opposing team in the event competitors'
       );
     }
 
@@ -152,9 +149,12 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
       color,
       homeScore: favoriteTeam.score?.value,
       awayScore: otherTeam.score?.value,
-      winner: favoriteTeam.winner,
+      winner: favoriteTeam.winner
     };
   });
+
+  ('use cache');
+  cacheLife('hours');
 
   return {
     id: teamId,
@@ -163,39 +163,36 @@ export async function getTeamData(teamId: string): Promise<TeamData> {
     color: data.team.color,
     record: data.team.recordSummary,
     standing: data.team.standingSummary,
-    games,
+    games
   };
 }
 
 export async function getAllTeamIds(): Promise<TeamBasicInfo[]> {
-  'use cache';
-  cacheLife('hours');
-
   const pagePromises = Array.from({ length: 8 }, (_, i) =>
     fetch(
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${i + 1}`,
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?page=${i + 1}`
     ).then((res) => {
       if (!res.ok) {
         throw new Error(`Failed to fetch team IDs: ${res.statusText}`);
       }
       return res.json();
-    }),
+    })
   );
 
   const dataArray = await Promise.all(pagePromises);
   const teams: TeamBasicInfo[] = dataArray.flatMap((data) =>
-    data.sports[0].leagues[0].teams.map((team: any) => team.team),
+    data.sports[0].leagues[0].teams.map((team: any) => team.team)
   );
+
+  ('use cache');
+  cacheLife('hours');
 
   return teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
 }
 
 export async function getTodaySchedule() {
-  'use cache';
-  cacheLife('seconds');
-
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
+    'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
   );
 
   if (!res.ok) {
@@ -209,7 +206,7 @@ export async function getTodaySchedule() {
 
     if (!homeTeam || !awayTeam) {
       throw new Error(
-        'Expected to find both home and away teams in the event competitors',
+        'Expected to find both home and away teams in the event competitors'
       );
     }
 
@@ -219,12 +216,15 @@ export async function getTodaySchedule() {
       status: event.competitions[0].status.type.shortDetail,
       date: formatDateTime(date),
       homeTeam: formatTeamData(homeTeam),
-      awayTeam: formatTeamData(awayTeam),
+      awayTeam: formatTeamData(awayTeam)
     };
   });
 
+  ('use cache');
+  cacheLife('seconds');
+
   return {
-    games,
+    games
   };
 }
 
@@ -239,18 +239,15 @@ function formatTeamData(teamData: CompetitorData) {
     winner: teamData.winner,
     record: teamData.records
       ? `(${teamData.records[0].summary}, ${teamData.records[3]?.summary ?? 'N/A'})`
-      : 'N/A',
+      : 'N/A'
   };
 }
 
 export async function getConferenceRankings(): Promise<
   ConferenceRankingEntry[]
 > {
-  'use cache';
-  cacheLife('hours');
-
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2025',
+    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2025'
   );
 
   if (!res.ok) {
@@ -269,9 +266,12 @@ export async function getConferenceRankings(): Promise<
       color: getTeamColor(team.displayName),
       conferenceWinLoss: getStat(stats, 'vs. Conf.'),
       gamesBack: getStat(stats, 'gamesBehind'),
-      overallWinLoss: `${getStat(stats, 'wins')}-${getStat(stats, 'losses')}`,
+      overallWinLoss: `${getStat(stats, 'wins')}-${getStat(stats, 'losses')}`
     };
   });
+
+  ('use cache');
+  cacheLife('hours');
 
   return teamsData.sort(
     (a: ConferenceRankingEntry, b: ConferenceRankingEntry) => {
@@ -279,6 +279,6 @@ export async function getConferenceRankings(): Promise<
       if (a.gamesBack !== '-' && b.gamesBack === '-') return 1;
       if (a.gamesBack === '-' && b.gamesBack === '-') return 0;
       return parseFloat(a.gamesBack) - parseFloat(b.gamesBack);
-    },
+    }
   );
 }
