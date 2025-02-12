@@ -5,6 +5,7 @@ export default {
     inlineCss: true
   },
   images: {
+    minimumCacheTTL: 2592000,
     // Example: https://a.espncdn.com/i/teamlogos/ncaa/500/66.png
     // Default: https://a.espncdn.com/i/teamlogos/default-team-logo-500.png
     remotePatterns: [
