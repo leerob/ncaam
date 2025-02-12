@@ -15,7 +15,6 @@ export default {
         pathname: '/i/teamlogos/**',
         search: ''
       }
-    ],
-    formats: ['image/avif', 'image/webp']
+    ]
   }
 };
