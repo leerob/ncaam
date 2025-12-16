@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getTodaySchedule } from 'app/espn';
-import { unstable_cacheLife as cacheLife } from 'next/cache';
+import { cacheLife } from 'next/cache';
 
 function Team({
   color,

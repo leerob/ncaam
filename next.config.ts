@@ -1,7 +1,6 @@
 export default {
+  cacheComponents: true,
   experimental: {
-    ppr: true,
-    useCache: true,
     inlineCss: true
   },
   images: {

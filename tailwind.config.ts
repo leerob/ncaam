@@ -1,5 +1,3 @@
-import type { Config } from 'tailwindcss';
-
 export default {
   content: ['./app/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -9,4 +7,4 @@ export default {
     hoverOnlyWhenSupported: true,
   },
   plugins: [],
-} satisfies Config;
+};
