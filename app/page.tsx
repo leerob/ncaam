@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
-import { unstable_cacheLife as cacheLife } from 'next/cache';
+import { cacheLife } from 'next/cache';
 import TeamSelect from './[teamId]/select';
 import ConferencePage from './conference/page';
 import ScoresPage from './scores/page';
