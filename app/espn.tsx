@@ -232,11 +232,28 @@ function formatTeamData(teamData: CompetitorData) {
   };
 }
 
+function getCurrentSeasonYear(): number {
+  const now = new Date();
+  const month = now.getMonth(); // 0-indexed: 0 = January, 11 = December
+  const year = now.getFullYear();
+
+  // College basketball season runs from November to April
+  // ESPN uses the later year (e.g., "2026" for the 2025-26 season)
+  // If we're in August-December, the season year is next calendar year
+  // If we're in January-July, the season year is current calendar year
+  if (month >= 7) {
+    // August (7) through December (11)
+    return year + 1;
+  }
+  return year;
+}
+
 export async function getConferenceRankings(): Promise<
   ConferenceRankingEntry[]
 > {
+  const seasonYear = getCurrentSeasonYear();
   const res = await fetch(
-    'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=2025'
+    `https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?region=us&lang=en&contentorigin=espn&group=8&season=${seasonYear}`
   );
 
   if (!res.ok) {
