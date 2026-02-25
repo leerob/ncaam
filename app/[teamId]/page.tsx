@@ -1,9 +1,11 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cacheLife } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { getAllTeamIds, getTeamData } from 'app/espn';
 import TeamSelect from './select';
+import { RefreshButton } from 'app/refresh-button';
+import { refreshSchedule } from 'app/actions';
 
 function Row({
   awayScore,
@@ -83,9 +85,9 @@ export default async function HomePage(props: {
   params: Promise<{ teamId: string }>;
 }) {
   'use cache';
-  cacheLife('hours');
-
   const params = await props.params;
+  cacheTag('schedule', `team-${params.teamId}`);
+  cacheLife('hours');
   const [team, allTeams] = await Promise.all([
     getTeamData(params.teamId),
     getAllTeamIds()
@@ -112,7 +114,10 @@ export default async function HomePage(props: {
         </div>
         <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>
         <TeamSelect allTeams={allTeams} teamId={params.teamId} />
-        <h2 className="font-semibold text-xl">Schedule</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="font-semibold text-xl">Schedule</h2>
+          <RefreshButton action={refreshSchedule} />
+        </div>
         <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">
           Full
         </h3>
