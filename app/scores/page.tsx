@@ -1,6 +1,8 @@
 import { Scores } from './scores';
 import { Suspense } from 'react';
 import clsx from 'clsx';
+import { RefreshButton } from 'app/refresh-button';
+import { refreshScores } from 'app/actions';
 
 function TeamSkeleton() {
   return (
@@ -46,7 +48,10 @@ function ScoresLoading() {
 export default function ScoresPage() {
   return (
     <section className="w-full mx-auto p-6">
-      <h2 className="font-semibold text-2xl">Scores</h2>
+      <div className="flex items-center gap-2">
+        <h2 className="font-semibold text-2xl">Scores</h2>
+        <RefreshButton action={refreshScores} />
+      </div>
       <Suspense fallback={<ScoresLoading />}>
         <Scores />
       </Suspense>

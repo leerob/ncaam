@@ -2,10 +2,12 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllTeamIds, getTeamData } from 'app/espn';
-import { cacheLife } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import TeamSelect from './[teamId]/select';
 import ConferencePage from './conference/page';
 import ScoresPage from './scores/page';
+import { RefreshButton } from './refresh-button';
+import { refreshSchedule } from './actions';
 
 function Row({
   awayScore,
@@ -75,6 +77,7 @@ function Row({
 
 async function Schedule() {
   'use cache';
+  cacheTag('schedule', 'team-66');
   cacheLife('hours');
 
   const [team, allTeams] = await Promise.all([
@@ -106,7 +109,10 @@ async function Schedule() {
       </div>
       <h3 className="text-gray-700 dark:text-gray-300 mb-2">{`${record} • ${standing}`}</h3>
       <TeamSelect allTeams={allTeams} teamId={'66'} />
-      <h2 className="font-semibold text-xl">Schedule</h2>
+      <div className="flex items-center gap-2">
+        <h2 className="font-semibold text-xl">Schedule</h2>
+        <RefreshButton action={refreshSchedule} />
+      </div>
       <h3 className="font-semibold text-gray-700 dark:text-gray-300">Next</h3>
       {nextGame && <Row isLast {...nextGame} />}
       <h3 className="font-semibold text-gray-700 dark:text-gray-300 mt-4">
